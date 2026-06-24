@@ -1,0 +1,8 @@
+{
+  "name": "Agenda Azul",
+  "description": "Organizando a jornada da sua família.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

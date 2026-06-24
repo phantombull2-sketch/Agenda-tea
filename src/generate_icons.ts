@@ -1,0 +1,181 @@
+import fs from 'fs';
+import path from 'path';
+import sharp from 'sharp';
+
+const svgContent = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient: Bright blue to deeper rich blue -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    
+    <!-- Shading Gradients for puzzle pieces -->
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="yellowGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f87171"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+
+    <!-- Drop Shadow Filter for White Notebook -->
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+
+    <filter id="pieceShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Ground: Safe Squircle Layout -->
+  <rect x="0" y="0" width="512" height="512" rx="108" fill="url(#bgGrad)"/>
+
+  <!-- White Notebook Card -->
+  <rect x="132" y="76" width="248" height="268" rx="28" fill="#ffffff" filter="url(#shadow)"/>
+
+  <!-- Left Spiral Loops (6 realistic metal blue rings) -->
+  <!-- Ring 1 -->
+  <rect x="116" y="110" width="34" height="10" rx="5" fill="#1e40af" opacity="0.95"/>
+  <rect x="116" y="112" width="34" height="4" rx="2" fill="#3b82f6" opacity="0.4"/>
+  <!-- Ring 2 -->
+  <rect x="116" y="148" width="34" height="10" rx="5" fill="#1e40af" opacity="0.95"/>
+  <rect x="116" y="150" width="34" height="4" rx="2" fill="#3b82f6" opacity="0.4"/>
+  <!-- Ring 3 -->
+  <rect x="116" y="186" width="34" height="10" rx="5" fill="#1e40af" opacity="0.95"/>
+  <rect x="116" y="188" width="34" height="4" rx="2" fill="#3b82f6" opacity="0.4"/>
+  <!-- Ring 4 -->
+  <rect x="116" y="224" width="34" height="10" rx="5" fill="#1e40af" opacity="0.95"/>
+  <rect x="116" y="226" width="34" height="4" rx="2" fill="#3b82f6" opacity="0.4"/>
+  <!-- Ring 5 -->
+  <rect x="116" y="262" width="34" height="10" rx="5" fill="#1e40af" opacity="0.95"/>
+  <rect x="116" y="264" width="34" height="4" rx="2" fill="#3b82f6" opacity="0.4"/>
+  <!-- Ring 6 -->
+  <rect x="116" y="300" width="34" height="10" rx="5" fill="#1e40af" opacity="0.95"/>
+  <rect x="116" y="302" width="34" height="4" rx="2" fill="#3b82f6" opacity="0.4"/>
+
+  <!-- Right Clasp Strap (Blue wallet style tab) -->
+  <path d="M 364,180 h 26 c 8,0 14,6 14,14 v 24 c 0,8 -6,14 -14,14 h -26 z" fill="#2563eb" filter="url(#shadow)"/>
+  <circle cx="390" cy="206" r="6" fill="#ffffff"/>
+
+  <!-- Puzzle Jigsaw Heart -->
+  <!-- We draw a beautiful heart constructed of 4 interlocking sections centered at (256, 184) -->
+  <g transform="translate(181, 114)" filter="url(#pieceShadow)">
+    <!-- Top Left Piece (Blue) -->
+    <!-- Heart top-left lobe, puzzle joiner on bottom and right -->
+    <path d="M 75,75 
+             C 75,34 41,0 0,0 
+             c -41,0 -75,34 -75,75 
+             c 0,26 13,49 33,63 
+             l 0,0 
+             c 6,-8 16,-13 27,-13 
+             c 19,0 35,16 35,35 
+             c 0,11 -5,21 -13,27 
+             l 3,2 
+             c 12,-4 25,-14 35,-24
+             L 75,120
+             Z" fill="url(#blueGrad)" transform="translate(75, 40)" />
+
+    <!-- Top Right Piece (Yellow) -->
+    <path d="M 0,75 
+             C 0,34 34,0 75,0 
+             c 41,0 75,34 75,75 
+             c 0,26 -13,49 -33,63 
+             l 0,0 
+             c -6,-8 -16,-13 -27,-13 
+             c -19,0 -35,16 -35,35 
+             c 0,11 5,21 13,27 
+             l -3,2 
+             c -12,-4 -25,-14 -35,-24
+             L 0,120
+             Z" fill="url(#yellowGrad)" transform="translate(75, 40)" />
+
+    <!-- Bottom Left Piece (Red) -->
+    <path d="M 0,0 
+             L 0,80
+             C -20,60 -50,30 -75,0
+             c 20,4 35,14 45,24
+             c 8,-6 18,-11 29,-11
+             c 19,0 35,16 35,35
+             c 0,11 -5,21 -13,27
+             Z" fill="url(#redGrad)" transform="translate(75, 115) scale(1, -1) translate(0, -80)" />
+
+    <!-- Bottom Right Piece (Green) -->
+    <path d="M 0,0 
+             L 0,80
+             C 20,60 50,30 75,0
+             c -20,4 -35,14 -45,24
+             c -8,-6 -18,-11 -29,-11
+             c -19,0 -35,16 -35,35
+             c 0,11 5,21 13,27
+             Z" fill="url(#greenGrad)" transform="translate(75, 115) scale(-1, -1) translate(0, -80)" />
+  </g>
+
+  <!-- Blue Checkmark & Lines underneath heart on the white notebook -->
+  <!-- Checkmark -->
+  <path d="M 184,296 l 14,14 l 24,-24" fill="none" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Text placeholders in light blue -->
+  <rect x="232" y="286" width="96" height="8" rx="4" fill="#60a5fa" opacity="0.4"/>
+  <rect x="232" y="302" width="96" height="8" rx="4" fill="#60a5fa" opacity="0.4"/>
+
+  <!-- APP TITLE TYPOGRAPHY (Exactly mimicking "Agenda Azul") -->
+  <text x="256" y="414" font-family="'Inter', system-ui, sans-serif" font-weight="800" font-size="64" fill="#ffffff" text-anchor="middle" letter-spacing="-1">Agenda</text>
+  
+  <!-- "Azul" between lines -->
+  <g transform="translate(256, 460)">
+    <line x1="-140" y1="-12" x2="-44" y2="-12" stroke="#60a5fa" stroke-width="4" stroke-linecap="round"/>
+    <text x="0" y="0" font-family="'Inter', system-ui, sans-serif" font-weight="800" font-size="44" fill="#60a5fa" text-anchor="middle" letter-spacing="1">Azul</text>
+    <line x1="44" y1="-12" x2="140" y2="-12" stroke="#60a5fa" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>
+`;
+
+async function main() {
+  const iconsDir = path.join(process.cwd(), 'public', 'icons');
+  if (!fs.existsSync(iconsDir)) {
+    fs.mkdirSync(iconsDir, { recursive: true });
+  }
+
+  // Also write SVG source as reference
+  fs.writeFileSync(path.join(iconsDir, 'icon.svg'), svgContent);
+  console.log('SVG source written to public/icons/icon.svg');
+
+  const buffer = Buffer.from(svgContent);
+
+  // Render 192x192
+  await sharp(buffer)
+    .resize(192, 192)
+    .png()
+    .toFile(path.join(iconsDir, 'icon-192.png'));
+  console.log('Successfully created public/icons/icon-192.png');
+
+  // Render 512x512
+  await sharp(buffer)
+    .resize(512, 512)
+    .png()
+    .toFile(path.join(iconsDir, 'icon-512.png'));
+  console.log('Successfully created public/icons/icon-512.png');
+
+  // Render apple-touch-icon.png (180x180 standard size)
+  await sharp(buffer)
+    .resize(180, 180)
+    .png()
+    .toFile(path.join(iconsDir, 'apple-touch-icon.png'));
+  console.log('Successfully created public/icons/apple-touch-icon.png');
+}
+
+main().catch(err => {
+  console.error('Error generating icons:', err);
+  process.exit(1);
+});

@@ -2,7 +2,7 @@
   "name": "Agenda Azul",
   "short_name": "Agenda Azul",
   "description": "Aplicativo para organizar rotina, terapias, consultas, documentos, medicamentos, crises e informações importantes de crianças TEA.",
-  "start_url": "/",
+  "start_url": "/https://agenda-tea.vercel.app/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -21,5 +21,10 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "lang": "pt",
+  "display_override": [
+    "fullscreen",
+    "window-controls-overlay"
   ]
 }

@@ -315,7 +315,7 @@ export function DocumentsScreen({ onBack }: { onBack?: () => void }) {
         title="Excluir Documento"
         itemName={deleteData?.name || 'este documento'}
       />
-      <FeedbackComponent />
+      {FeedbackComponent()}
 
       {previewDoc && (
         <div className="fixed inset-0 z-50 bg-slate-950/95 flex flex-col items-center">

@@ -382,7 +382,7 @@ export function DiaryScreen() {
         </div>
       )}
       
-      <FeedbackComponent />
+      {FeedbackComponent()}
     </div>
   );
 }

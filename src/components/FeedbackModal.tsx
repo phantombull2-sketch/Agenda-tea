@@ -42,7 +42,7 @@ export function useFeedback() {
 
   const close = () => setModalState(null);
 
-  const FeedbackComponent = () => modalState ? (
+  const renderFeedback = () => modalState ? (
     <FeedbackModal 
       {...modalState} 
       onConfirm={() => {
@@ -56,5 +56,5 @@ export function useFeedback() {
     />
   ) : null;
 
-  return { showSuccess, showError, confirm, close, FeedbackComponent };
+  return { showSuccess, showError, confirm, close, renderFeedback, FeedbackComponent: renderFeedback };
 }

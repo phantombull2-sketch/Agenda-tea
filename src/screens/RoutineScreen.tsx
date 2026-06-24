@@ -325,7 +325,7 @@ export function RoutineScreen() {
         title="Excluir Atividade"
         itemName={deleteData?.name || 'esta atividade'}
       />
-      <FeedbackComponent />
+      {FeedbackComponent()}
     </div>
   );
 }

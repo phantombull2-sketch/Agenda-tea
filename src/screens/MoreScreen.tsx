@@ -192,7 +192,7 @@ export function MoreScreen({ onNavigate }: { onNavigate: (tab: Tab | string) => 
       <div className="pt-4 text-center">
          <p className="text-xs text-stone-400 font-medium px-4">Os dados são sensíveis e ficam armazenados {userUid ? 'na nuvem com segurança.' : 'offline apenas neste aparelho.'}</p>
       </div>
-      <FeedbackComponent />
+      {FeedbackComponent()}
 
       {/* Backup Selection Modal for Demo Mode */}
       {showBackupChoice && (

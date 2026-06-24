@@ -530,7 +530,7 @@ export function TherapiesScreen() {
          </div>
       </div>
       
-      <FeedbackComponent />
+      {FeedbackComponent()}
     </div>
   );
 }

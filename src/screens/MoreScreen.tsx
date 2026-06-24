@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { User, FileText, Pill, AlertTriangle, FileBarChart, Download, ArrowRight, ShieldCheck, Upload, LogIn } from 'lucide-react';
+import { User, FileText, Pill, AlertTriangle, FileBarChart, Download, ArrowRight, ShieldCheck, Upload, LogIn, Laptop2 } from 'lucide-react';
 import { useAppStore } from '../store';
 import { Tab } from '../components/Layout';
 import { auth, googleProvider, isFirebaseConfigured } from '../lib/firebase';
@@ -20,7 +20,8 @@ export function MoreScreen({ onNavigate }: { onNavigate: (tab: Tab | string) => 
     { id: 'crises', icon: <AlertTriangle className="text-red-500" />, title: 'Registro de Crises', desc: 'Histórico e gatilhos', bg: 'bg-red-50' },
     { id: 'documents', icon: <FileText className="text-amber-500" />, title: 'Documentos', desc: 'Laudos e exames', bg: 'bg-amber-50' },
     { id: 'reports', icon: <FileBarChart className="text-emerald-500" />, title: 'Relatórios', desc: 'Exportar para PDF', bg: 'bg-emerald-50' },
-    { id: 'technical', icon: <ShieldCheck className="text-stone-500" />, title: 'Revisão Técnica', desc: 'Menu e Ferramentas do Desenvolvedor', bg: 'bg-stone-100' }
+    { id: 'technical', icon: <ShieldCheck className="text-stone-500" />, title: 'Revisão Técnica', desc: 'Menu e Ferramentas do Desenvolvedor', bg: 'bg-stone-100' },
+    { id: 'pwa-diagnostic', icon: <Laptop2 className="text-purple-500" />, title: 'Diagnóstico PWA', desc: 'Verificar instalação e ícones', bg: 'bg-purple-50' }
   ] as const;
 
   const triggerDownload = (dataToBackup: any, isDemoBackup = false) => {

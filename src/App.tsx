@@ -13,6 +13,7 @@ import { CrisesScreen } from './screens/CrisesScreen';
 import { ReportsScreen } from './screens/ReportsScreen';
 import { WelcomeScreen } from './screens/WelcomeScreen';
 import { TechnicalReviewScreen } from './screens/TechnicalReviewScreen';
+import { PWADiagnosticScreen } from './screens/PWADiagnosticScreen';
 import { FeedbackModal } from './components/FeedbackModal';
 import { PWAInstall } from './components/PWAInstall';
 
@@ -142,6 +143,7 @@ export default function App() {
       case 'crises': return <CrisesScreen onBack={() => setActiveTab('more')} />;
       case 'reports': return <ReportsScreen onBack={() => setActiveTab('more')} />;
       case 'technical': return <TechnicalReviewScreen onBack={() => setActiveTab('more')} />;
+      case 'pwa-diagnostic': return <PWADiagnosticScreen onBack={() => setActiveTab('more')} />;
       default: return <HomeScreen onNavigate={setActiveTab as any} />;
     }
   };

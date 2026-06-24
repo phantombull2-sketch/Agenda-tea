@@ -1,59 +1,47 @@
-const CACHE_NAME = 'agenda-azul-cache-v1';
+// This is the "Offline page" service worker
 
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
+
+const CACHE = "pwabuilder-page";
+
+// TODO: replace the following with the correct offline fallback page i.e.: const offlineFallbackPage = "offline.html";
+const offlineFallbackPage = "index.html";
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+self.addEventListener('install', async (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      // Just cache some basics mostly to pass PWA tests
-      return cache.addAll([
-        '/',
-        '/index.html',
-        '/manifest.json',
-        '/icons/icon-192.png',
-        '/icons/icon-512.png',
-        '/icons/apple-touch-icon.png'
-      ]).catch(err => {
-         console.warn('Erro ao fazer pre-cache:', err);
-      });
-    })
+    caches.open(CACHE)
+      .then((cache) => cache.add(offlineFallbackPage))
   );
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      ).then(() => self.clients.claim());
-    })
-  );
-});
+if (workbox.navigationPreload.isSupported()) {
+  workbox.navigationPreload.enable();
+}
 
 self.addEventListener('fetch', (event) => {
-  // Stale-while-revalidate for everything, allows offline
-  if (event.request.method !== 'GET') return;
-  
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+  if (event.request.mode === 'navigate') {
+    event.respondWith((async () => {
+      try {
+        const preloadResp = await event.preloadResponse;
+
+        if (preloadResp) {
+          return preloadResp;
         }
-        return networkResponse;
-      }).catch(() => {
-         // Se falhar e for navegacao para HTML, voltar o index.html (SPA)
-         if (event.request.mode === 'navigate') {
-            return caches.match('/index.html');
-         }
-      });
-      return cachedResponse || fetchPromise;
-    })
-  );
+
+        const networkResp = await fetch(event.request);
+        return networkResp;
+      } catch (error) {
+
+        const cache = await caches.open(CACHE);
+        const cachedResp = await cache.match(offlineFallbackPage);
+        return cachedResp;
+      }
+    })());
+  }
 });
